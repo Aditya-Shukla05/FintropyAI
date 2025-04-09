@@ -1,6 +1,5 @@
 import * as React from "react"
 import { cva } from "class-variance-authority"
-import { AlertCircle, AlertTriangle, CheckCircle2, Info } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 
@@ -12,11 +11,6 @@ const alertVariants = cva(
         default: "bg-background text-foreground",
         destructive:
           "border-destructive/50 text-destructive dark:border-destructive [&>svg]:text-destructive",
-        success:
-          "border-success/50 text-success dark:border-success [&>svg]:text-success",
-        info: "border-info/50 text-info dark:border-info [&>svg]:text-info",
-        warning:
-          "border-warning/50 text-warning dark:border-warning [&>svg]:text-warning",
       },
     },
     defaultVariants: {
@@ -25,30 +19,14 @@ const alertVariants = cva(
   }
 )
 
-const Alert = React.forwardRef(
-  ({ className, variant, icon, children, ...props }, ref) => {
-    const Icon = icon
-      ? icon
-      : variant === "destructive"
-      ? AlertCircle
-      : variant === "success"
-      ? CheckCircle2
-      : variant === "warning"
-      ? AlertTriangle
-      : Info
-    return (
-      <div
-        ref={ref}
-        role="alert"
-        className={cn(alertVariants({ variant }), className)}
-        {...props}
-      >
-        <Icon className="h-4 w-4" />
-        {children}
-      </div>
-    )
-  }
-)
+const Alert = React.forwardRef(({ className, variant, ...props }, ref) => (
+  <div
+    ref={ref}
+    role="alert"
+    className={cn(alertVariants({ variant }), className)}
+    {...props}
+  />
+))
 Alert.displayName = "Alert"
 
 const AlertTitle = React.forwardRef(({ className, ...props }, ref) => (
