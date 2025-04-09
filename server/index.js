@@ -1,4 +1,3 @@
-
 import express from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
@@ -48,9 +47,6 @@ if (process.env.NODE_ENV === "development") {
 }
 
 const port = 5000;
-server.listen({
-  port,
-  host: "0.0.0.0",
-}, () => {
-  log(`Server running at http://0.0.0.0:${port}`);
+server.listen(port, 'localhost', () => {
+  log(`Server running at http://localhost:${port}`);
 });

@@ -1,9 +1,13 @@
 import express from "express";
 import fs from "fs";
 import path from "path";
+import { fileURLToPath } from 'url';
 import { createServer as createViteServer, createLogger } from "vite";
 import viteConfig from "../vite.config.js";
 import { nanoid } from "nanoid";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const viteLogger = createLogger();
 
@@ -45,7 +49,7 @@ export async function setupVite(app, server) {
 
     try {
       const clientTemplate = path.resolve(
-        import.meta.dirname,
+        __dirname,
         "..",
         "client",
         "index.html",
@@ -67,18 +71,33 @@ export async function setupVite(app, server) {
 }
 
 export function serveStatic(app) {
-  const distPath = path.resolve(import.meta.dirname, "..", "dist", "public");
+  // In development, serve from client directory
+  if (process.env.NODE_ENV === 'development') {
+    const clientPath = path.resolve(__dirname, "..", "client");
+    
+    if (!fs.existsSync(clientPath)) {
+      throw new Error(
+        `Could not find the client directory: ${clientPath}`
+      );
+    }
 
-  if (!fs.existsSync(distPath)) {
-    throw new Error(
-      `Could not find the build directory: ${distPath}, make sure to build the client first`,
-    );
+    app.use(express.static(clientPath));
+    app.use("*", (_req, res) => {
+      res.sendFile(path.resolve(clientPath, "index.html"));
+    });
+  } else {
+    // In production, serve from dist directory
+    const distPath = path.resolve(__dirname, "..", "dist");
+
+    if (!fs.existsSync(distPath)) {
+      throw new Error(
+        `Could not find the build directory: ${distPath}, make sure to build the client first`
+      );
+    }
+
+    app.use(express.static(distPath));
+    app.use("*", (_req, res) => {
+      res.sendFile(path.resolve(distPath, "index.html"));
+    });
   }
-
-  app.use(express.static(distPath));
-
-  // fall through to index.html if the file doesn't exist
-  app.use("*", (_req, res) => {
-    res.sendFile(path.resolve(distPath, "index.html"));
-  });
 }
