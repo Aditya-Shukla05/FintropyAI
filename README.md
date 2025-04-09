@@ -1,6 +1,6 @@
 # FintropyAI
 
 Members :
-Aditya Shukla
-Manik Dev Azad
-Rudra Pratap Singh
+- Aditya Shukla
+- Manik Dev Azad
+- Rudra Pratap Singh
